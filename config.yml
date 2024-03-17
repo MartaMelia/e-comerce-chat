@@ -1,0 +1,9 @@
+DATA_LINK: "https://drive.google.com/uc?export=download&id=1YHdS4bevp-GE-B9umAujKYs8sH4u3mnL"
+DATA_SAVE_PATH: "src/data/"
+DATA_FILE_NAME: "raw_data.csv"
+VECTOR_SAVE_PATH: "src/vectors/"
+VECTOR_FILE_NAME: "vector"
+GOOGLE_API_KEY: "AIzaSyBndeRosIKarjt5Gsd1vkQoGTf7j0IMBLg"
+MODEL_EMBEDDING: "models/embedding-001"
+VECTOR_COUNT: 5
+MODEL: "gemini-pro"
