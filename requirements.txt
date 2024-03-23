@@ -10,3 +10,5 @@ chromadb==0.4.22
 ctransformers==0.2.27
 langchain_google_genai
 google.generativeai
+pandas
+requests

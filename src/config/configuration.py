@@ -5,6 +5,7 @@ import requests
 from langchain.document_loaders import CSVLoader
 from langchain.vectorstores import Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+import pandas as pd
 
 
 
@@ -37,6 +38,31 @@ def _init_data():
         file.write(response.content)
 
     print("Data saved succesfully")
+
+    _data_filter()
+
+
+def _data_filter():
+    directory = os.path.dirname(cfg.DATA_SAVE_PATH)
+    file_path = os.path.join(directory, cfg.DATA_FILE_NAME)
+
+    df = pd.read_csv(file_path)
+    
+    df = df.dropna(axis=1, how='all')
+    df.drop(columns=['Is Amazon Seller', 'Upc Ean Code', 'Variants'], inplace=True)
+
+    links_split = df['Image'].str.split('|', expand=True)
+
+    links_split = links_split.iloc[:, :3]
+
+    new_column_names = [f'Image_{i+1}' for i in range(links_split.shape[1])]
+    links_split.columns = new_column_names
+
+    df = pd.concat([df, links_split], axis=1)
+
+    df.drop('Image', axis=1, inplace=True)
+
+    df.to_csv(file_path, index=False)
 
 
 def _init_vector():

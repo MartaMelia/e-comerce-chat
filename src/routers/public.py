@@ -9,6 +9,8 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 from langchain.prompts import PromptTemplate
 from .prompts import assistant_prompt
+import re
+import requests
 
 
 router = APIRouter()
@@ -33,6 +35,25 @@ async def assistant(request: AssistantRequest):
     combine_docs_chain = create_stuff_documents_chain(llm, prompt)
     retrieval_chain = create_retrieval_chain(retriever, combine_docs_chain)
 
-    response=retrieval_chain.invoke({"input": request.question})
+    response = retrieval_chain.invoke({"input": request.question})
 
-    return {"answer": response["answer"]}
+    return {"answer": _clean_image_links(response["answer"])}
+
+
+def _clean_image_links(input_string):
+    url_pattern = r'\bhttps?://[^ ]*\.(?:png|jpg)\b'
+    urls = re.findall(url_pattern, input_string)
+
+    valid_urls = []
+    for url in urls:
+        try:
+            response = requests.head(url, allow_redirects=True, timeout=5)
+            if response.status_code < 400:
+                valid_urls.append(url)
+        except requests.RequestException:
+            pass
+
+    for url in set(urls) - set(valid_urls):
+        input_string = input_string.replace(url, '')
+
+    return input_string
