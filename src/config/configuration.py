@@ -72,7 +72,7 @@ def _init_vector():
         print("vector has already initialized.")
         return
 
-    embeddings = GoogleGenerativeAIEmbeddings(model=cfg.MODEL_EMBEDDING, google_api_key=cfg.GOOGLE_API_KEY)
+    embeddings = GoogleGenerativeAIEmbeddings(model=cfg.MODEL_EMBEDDING, google_api_key=cfg.GOOGLE_API_KEY, task_type="retrieval_query")
     file_path = os.path.join(cfg.DATA_SAVE_PATH, cfg.DATA_FILE_NAME)
 
     print("Loading data file.")

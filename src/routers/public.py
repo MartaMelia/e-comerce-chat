@@ -18,6 +18,24 @@ router = APIRouter()
 with open('config.yml', 'r', encoding='utf8') as ymlfile:
     cfg = box.Box(yaml.safe_load(ymlfile))
 
+def _clean_image_links(input_string):
+    url_pattern = r'\bhttps?://[^ ]*\.(?:png|jpg)\b'
+    urls = re.findall(url_pattern, input_string)
+
+    valid_urls = []
+    for url in urls:
+        try:
+            response = requests.head(url, allow_redirects=True, timeout=5)
+            if response.status_code < 400:
+                valid_urls.append(url)
+        except requests.RequestException:
+            pass
+
+    for url in set(urls) - set(valid_urls):
+        input_string = input_string.replace(url, '')
+
+    return input_string
+
 
 @router.post("/assistant")
 async def assistant(request: AssistantRequest):
@@ -40,20 +58,3 @@ async def assistant(request: AssistantRequest):
     return {"answer": _clean_image_links(response["answer"])}
 
 
-def _clean_image_links(input_string):
-    url_pattern = r'\bhttps?://[^ ]*\.(?:png|jpg)\b'
-    urls = re.findall(url_pattern, input_string)
-
-    valid_urls = []
-    for url in urls:
-        try:
-            response = requests.head(url, allow_redirects=True, timeout=5)
-            if response.status_code < 400:
-                valid_urls.append(url)
-        except requests.RequestException:
-            pass
-
-    for url in set(urls) - set(valid_urls):
-        input_string = input_string.replace(url, '')
-
-    return input_string

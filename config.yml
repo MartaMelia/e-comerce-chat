@@ -5,5 +5,5 @@ VECTOR_SAVE_PATH: "src/vectors/"
 VECTOR_FILE_NAME: "vector"
 GOOGLE_API_KEY: "AIzaSyBndeRosIKarjt5Gsd1vkQoGTf7j0IMBLg"
 MODEL_EMBEDDING: "models/embedding-001"
-VECTOR_COUNT: 5
+VECTOR_COUNT: 14
 MODEL: "gemini-pro"
